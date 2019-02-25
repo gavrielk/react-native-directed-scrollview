@@ -18,7 +18,7 @@ const ScrollView = createReactClass({
     return this;
   },
   getScrollableNode: function() {
-    return ReactNative.findNodeHandle(this._scrollViewRef);
+    return ReactNative.findNodeHandle(this._scrollViewRef.current);
   },
   scrollTo: function({ x, y, animated }) {
      UIManager.dispatchViewManagerCommand(
@@ -34,7 +34,7 @@ const ScrollView = createReactClass({
       [animated !== false],
     );
   },
-  _scrollViewRef: null,
+  _scrollViewRef: React.createRef(),
   _setScrollViewRef: function(ref) {
     this._scrollViewRef = ref;
   },
@@ -45,9 +45,9 @@ const ScrollView = createReactClass({
   },
   render: function() {
     return (
-      <NativeScrollView 
+      <NativeScrollView
         {...this.props}
-        ref={this._setScrollViewRef}
+        ref={this._scrollViewRef}
         onScrollBeginDrag={this.scrollResponderHandleScrollBeginDrag}
         onScrollEndDrag={this.scrollResponderHandleScrollEndDrag}
         onScroll={this.scrollResponderHandleScroll}
