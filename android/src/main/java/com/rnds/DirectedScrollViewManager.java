@@ -40,9 +40,9 @@ class DirectedScrollViewManager extends ViewGroupManager<DirectedScrollView> {
 
     switch (commandType) {
       case COMMAND_SCROLL_TO:
-        Double translateX = args.getDouble(0);
-        Double translateY = args.getDouble(1);
-        Boolean animated = args.getBoolean(2);
+        Double translateX = args.isNull(0) ? 0.0 : args.getDouble(0);
+        Double translateY = args.isNull(1) ? 0.0 : args.getDouble(1);
+        Boolean animated = args.isNull(2) ? false : args.getBoolean(2);
 
         view.scrollTo(translateX, translateY, animated);
         break;
