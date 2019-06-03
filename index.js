@@ -31,14 +31,14 @@ const ScrollView = createReactClass({
   scrollTo: function({ x, y, animated }) {
     UIManager.dispatchViewManagerCommand(
       this.getScrollableNode(),
-      UIManager.DirectedScrollView.Commands.scrollTo,
+      UIManager.getViewManagerConfig('DirectedScrollView').Commands.scrollTo,
       [x || 0, y || 0, animated !== false]
     );
   },
   zoomToStart: function({ animated }) {
     UIManager.dispatchViewManagerCommand(
       this.getScrollableNode(),
-      UIManager.DirectedScrollView.Commands.zoomToStart,
+      UIManager.getViewManagerConfig('DirectedScrollView').Commands.zoomToStart,
       [animated !== false]
     );
   },
