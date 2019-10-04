@@ -38,6 +38,7 @@
     "@types/react": "^16.9.5",
     "@types/react-native": "^0.60.17",
     "@types/react-test-renderer": "^16.9.0",
+    "clang-format": "^1.2.4",
     "husky": "^3.0.8",
     "lint-staged": "^9.4.1",
     "np": "^5.1.0",
@@ -62,7 +63,7 @@
       "git add"
     ],
     "ios/RCTDirectedScrollView/**/*.{m,h}": [
-      "clang-format --style=LLVM",
+      "git-clang-format --style=LLVM",
       "git add"
     ]
   },
