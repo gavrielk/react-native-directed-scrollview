@@ -10,10 +10,10 @@ Pod::Spec.new do |s|
   s.license        = package['license']
   s.author         = package['author']
   s.homepage       = package['homepage']
-  s.source         = { :git => 'https://github.com/chrisfisher/react-native-directed-scrollview.git', :tag => s.version }
+  s.source         = { :git => 'https://github.com/kevinsperrine/react-native-directed-scrollview.git', :tag => s.version }
 
   s.requires_arc   = true
-  s.platform       = :ios, '7.0'
+  s.platform       = :ios, '9.0'
 
   s.preserve_paths = 'README.md', 'package.json', 'index.js'
   s.source_files   = 'ios/DirectedScrollView/*.{h,m}'
