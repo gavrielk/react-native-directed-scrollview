@@ -3,8 +3,6 @@ import ReactNative, {
   requireNativeComponent,
   View,
   UIManager,
-  StyleSheet,
-  Platform
 } from 'react-native';
 import ScrollResponder from 'react-native/Libraries/Components/ScrollResponder';
 import createReactClass from 'create-react-class';

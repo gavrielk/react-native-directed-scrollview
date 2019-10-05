@@ -2,11 +2,12 @@
 //  DirectedScrollViewChildManager.m
 //  DirectedScrollViewChildManager
 //
+//
 
 #import "DirectedScrollViewChildManager.h"
+#import <React/RCTEventDispatcher.h>
 #import <React/RCTScrollView.h>
 #import <React/RCTUIManager.h>
-#import <React/RCTEventDispatcher.h>
 
 @implementation DirectedScrollViewChild
 
@@ -16,12 +17,12 @@ static NSString *const SCROLL_DIRECTION_VERTICAL = @"vertical";
 
 - (BOOL)shouldScrollHorizontally {
   return [self.scrollDirection isEqualToString:SCROLL_DIRECTION_BOTH] ||
-    [self.scrollDirection isEqualToString:SCROLL_DIRECTION_HORIZONTAL];
+      [self.scrollDirection isEqualToString:SCROLL_DIRECTION_HORIZONTAL];
 }
 
 - (BOOL)shouldScrollVertically {
   return [self.scrollDirection isEqualToString:SCROLL_DIRECTION_BOTH] ||
-    [self.scrollDirection isEqualToString:SCROLL_DIRECTION_VERTICAL];
+      [self.scrollDirection isEqualToString:SCROLL_DIRECTION_VERTICAL];
 }
 
 @end
@@ -32,13 +33,12 @@ RCT_EXPORT_MODULE()
 
 @synthesize bridge = _bridge;
 
-- (UIView *)view
-{
-    DirectedScrollViewChild *directedScrollViewChild = [[DirectedScrollViewChild alloc] init];
+- (UIView *)view {
+  DirectedScrollViewChild *directedScrollViewChild = [[DirectedScrollViewChild alloc] init];
 
-    directedScrollViewChild.pointerEvents = RCTPointerEventsBoxNone;
+  directedScrollViewChild.pointerEvents = RCTPointerEventsBoxNone;
 
-    return directedScrollViewChild;
+  return directedScrollViewChild;
 }
 
 RCT_EXPORT_VIEW_PROPERTY(scrollDirection, NSString)

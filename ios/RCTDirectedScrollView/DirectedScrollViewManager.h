@@ -8,8 +8,8 @@
 
 @protocol DirectedScrollViewDelegate <NSObject>
 
--(void)scrollViewWillBeginDragging;
--(void)scrollViewDidEndDragging;
+- (void)scrollViewWillBeginDragging;
+- (void)scrollViewDidEndDragging;
 
 @end
 
