@@ -5,8 +5,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <React/RCTViewManager.h>
 #import <React/RCTView.h>
+#import <React/RCTViewManager.h>
 
 @interface DirectedScrollViewChild : RCTView
 

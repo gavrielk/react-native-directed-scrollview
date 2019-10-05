@@ -1,14 +1,25 @@
 {
   "name": "react-native-directed-scrollview",
-  "version": "1.3.7",
+  "version": "2.0.0",
   "description": "A natively implemented scrollview component which lets you specify different scroll directions for child content.",
-  "main": "index.js",
   "scripts": {
-    "test": ""
+    "analyze": "npx tsc --noEmit",
+    "dev-sync": "yarn build && cp -r *podspec lib windows web android ios src example/node_modules/react-native-device-info/",
+    "lint": "npx eslint ./ --ignore-pattern example --ignore-pattern node_modules --fix --quiet",
+    "shipit": "np",
+    "test": "echo no tests defined",
+    "precommit": "lint-staged && yarn analyze",
+    "build": "bob build",
+    "prepare": "yarn build"
   },
+  "react-native": "src/index.ts",
+  "types": "lib/typescript/index.d.ts",
+  "main": "lib/commonjs/index.js",
+  "module": "lib/module/index.js",
+  "files": ["/android", "!/android/build", "/ios", "src/", "lib/", "/*.podspec"],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/chrisfisher/react-native-directed-scrollview.git"
+    "url": "https://github.com/kevinsperrine/react-native-directed-scrollview"
   },
   "keywords": [
     "react-component",
@@ -54,18 +65,20 @@
   },
   "lint-staged": {
     "src/**/*.{ts,tsx}": [
-      "yarn prettier --write --config prettier.config.js",
+      "yarn prettier --write",
       "yarn tslint --project tsconfig.json --config tslint.json --fix",
       "git add"
     ],
-    "android/app/src/**/*.java": [
-      "yarn prettier --write",
-      "git add"
-    ],
-    "ios/RCTDirectedScrollView/**/*.{m,h}": [
-      "git-clang-format --style=LLVM",
-      "git add"
-    ]
+    "android/app/src/**/*.java": ["yarn clang-format -i", "git add"],
+    "ios/RCTDirectedScrollView/**/*.{m,h}": ["yarn clang-format -i", "git add"]
+  },
+  "eslintConfig": {
+    "extends": "@react-native-community"
+  },
+  "@react-native-community/bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": ["commonjs", "module", "typescript"]
   },
   "husky": {
     "hooks": {

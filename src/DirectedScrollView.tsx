@@ -29,8 +29,30 @@ export class DirectedScrollView extends Component<IDirectedScrollViewProps> {
   private scrollViewRef = React.createRef<DirectedScrollView>();
   private scrollResponder: ScrollResponder.Mixin = createScrollResponder(this);
 
-  public constructor(props: IDirectedScrollViewProps) {
+  constructor(props: IDirectedScrollViewProps) {
     super(props);
+
+    for (const key in ScrollResponder.Mixin) {
+      if (typeof ScrollResponder.Mixin[key] === 'function' && key.startsWith('scrollResponder')) {
+        (this as any)[key] = ScrollResponder.Mixin[key].bind(this);
+      }
+    }
+
+    Object.keys(ScrollResponder.Mixin)
+      .filter(key => typeof ScrollResponder.Mixin[key] !== 'function')
+      .forEach(key => {
+        (this as any)[key] = ScrollResponder.Mixin[key];
+      });
+  }
+
+  public componentWillUnmount() {
+    this.scrollResponder.componentWillUnmount();
+  }
+
+  public setNativeProps(props: IDirectedScrollViewProps) {
+    if (this.scrollViewRef && this.scrollViewRef.current) {
+      this.scrollViewRef.current.setNativeProps(props);
+    }
   }
 
   public getScrollResponder() {
@@ -58,7 +80,9 @@ export class DirectedScrollView extends Component<IDirectedScrollViewProps> {
   }
 
   public componentDidMount() {
-    this.zoomToStart({ animated: false });
+    setTimeout(() => {
+      this.zoomToStart({ animated: false });
+    }, 16);
   }
 
   public render() {
@@ -78,6 +102,7 @@ export class DirectedScrollView extends Component<IDirectedScrollViewProps> {
         onResponderTerminate={this.scrollResponder.scrollResponderHandleTerminate}
         onResponderRelease={this.scrollResponder.scrollResponderHandleResponderRelease}
         onResponderReject={this.scrollResponder.scrollResponderHandleResponderReject}
+        onS={true}
       >
         <View style={this.props.contentContainerStyle} pointerEvents={'box-none'}>
           {this.props.children}

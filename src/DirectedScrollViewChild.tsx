@@ -1,8 +1,13 @@
 import React, { Component } from 'react';
-import { requireNativeComponent } from 'react-native';
+import { requireNativeComponent, ScrollViewProps } from 'react-native';
 const NativeScrollViewChild = requireNativeComponent('DirectedScrollViewChild');
 
-export class DirectedScrollViewChild extends Component {
+export interface IDirectedScrollViewChildOwnProps {
+  scrollDirection?: 'vertical' | 'horizontal' | 'both' | string;
+}
+
+export type IDirectedScrollViewChildProps = IDirectedScrollViewChildOwnProps & ScrollViewProps;
+export class DirectedScrollViewChild extends Component<IDirectedScrollViewChildProps> {
   public render() {
     return <NativeScrollViewChild {...this.props}>{this.props.children}</NativeScrollViewChild>;
   }
