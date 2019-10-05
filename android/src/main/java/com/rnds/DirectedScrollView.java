@@ -24,9 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DirectedScrollView extends ReactViewGroup {
-
   private static final long SNAP_BACK_ANIMATION_DURATION = 120;
-  private static final Interpolator SNAP_BACK_ANIMATION_INTERPOLATOR = new FastOutLinearInInterpolator();
+  private static final Interpolator SNAP_BACK_ANIMATION_INTERPOLATOR =
+      new FastOutLinearInInterpolator();
 
   private float minimumZoomScale = 1.0f;
   private float maximumZoomScale = 1.0f;
@@ -115,7 +115,6 @@ public class DirectedScrollView extends ReactViewGroup {
         break;
     }
 
-
     return false;
   }
 
@@ -139,7 +138,6 @@ public class DirectedScrollView extends ReactViewGroup {
     scaleDetector.onTouchEvent(motionEvent);
 
     return true;
-
   }
 
   private void disallowInterceptTouchEventsForParent() {
@@ -150,43 +148,43 @@ public class DirectedScrollView extends ReactViewGroup {
   }
 
   private void initPinchGestureListeners(Context context) {
-    scaleDetector = new ScaleGestureDetector(context, new ScaleGestureDetector.SimpleOnScaleGestureListener() {
+    scaleDetector = new ScaleGestureDetector(
+        context, new ScaleGestureDetector.SimpleOnScaleGestureListener() {
+          @Override
+          public boolean onScaleBegin(ScaleGestureDetector detector) {
+            float x = detector.getFocusX();
+            float y = detector.getFocusY();
+            pivotChildren(x, y);
+            updateChildren();
+            return true;
+          }
 
-      @Override
-      public boolean onScaleBegin(ScaleGestureDetector detector) {
-        float x = detector.getFocusX();
-        float y = detector.getFocusY();
-        pivotChildren(x, y);
-        updateChildren();
-        return true;
-      }
+          @Override
+          public boolean onScale(ScaleGestureDetector detector) {
+            if (!pinchGestureEnabled) {
+              return false;
+            }
 
-      @Override
-      public boolean onScale(ScaleGestureDetector detector) {
-        if (!pinchGestureEnabled) {
-          return false;
-        }
+            scaleFactor *= detector.getScaleFactor();
+            updateChildren();
+            return true;
+          }
 
-        scaleFactor *= detector.getScaleFactor();
-        updateChildren();
-        return true;
-      }
+          private void updateChildren() {
+            if (bouncesZoom) {
+              scaleChildren(false);
+            } else {
+              clampAndScaleChildren(false);
+            }
 
-      private void updateChildren() {
-        if (bouncesZoom) {
-          scaleChildren(false);
-        } else {
-          clampAndScaleChildren(false);
-        }
-
-        if (bounces) {
-          translateChildren(false);
-        } else {
-          clampAndTranslateChildren(false);
-        }
-        invalidate();
-      }
-    });
+            if (bounces) {
+              translateChildren(false);
+            } else {
+              clampAndTranslateChildren(false);
+            }
+            invalidate();
+          }
+        });
   }
 
   private void onActionDown(MotionEvent motionEvent) {
@@ -203,7 +201,9 @@ public class DirectedScrollView extends ReactViewGroup {
   private void onActionMove(MotionEvent motionEvent) {
     NativeGestureUtil.notifyNativeGestureStarted(this, motionEvent);
 
-    if (isScaleInProgress) return;
+    if (isScaleInProgress) {
+      return;
+    }
 
     isScrollInProgress = true;
 
@@ -214,7 +214,10 @@ public class DirectedScrollView extends ReactViewGroup {
     scrollY = startScrollY + deltaY;
 
     if (bounces) {
-      clampAndTranslateChildren(false, getMaxScrollY() <= 0 && !alwaysBounceVertical, getMaxScrollX() <= 0 && !alwaysBounceHorizontal);
+      clampAndTranslateChildren(
+          false,
+          getMaxScrollY() <= 0 && !alwaysBounceVertical,
+          getMaxScrollX() <= 0 && !alwaysBounceHorizontal);
     } else {
       clampAndTranslateChildren(false);
     }
@@ -242,8 +245,11 @@ public class DirectedScrollView extends ReactViewGroup {
     this.clampAndTranslateChildren(animated, true, true);
   }
 
-  private void clampAndTranslateChildren(boolean animated, boolean clampVertical, boolean clampHorizontal) {
-    float[] minPoints = transformPoints(new float[] { 0, 0 });
+  private void clampAndTranslateChildren(
+      boolean animated,
+      boolean clampVertical,
+      boolean clampHorizontal) {
+    float[] minPoints = transformPoints(new float[] {0, 0});
     float minX = minPoints[0];
     float minY = minPoints[1];
     float maxX = minPoints[0] + getMaxScrollX();
@@ -277,8 +283,16 @@ public class DirectedScrollView extends ReactViewGroup {
 
     for (DirectedScrollViewChild scrollableChild : scrollableChildren) {
       if (animated) {
-        animateProperty(scrollableChild, "scaleX", scrollableChild.getScaleX(), scaleFactor);
-        animateProperty(scrollableChild, "scaleY", scrollableChild.getScaleY(), scaleFactor);
+        animateProperty(
+            scrollableChild,
+            "scaleX",
+            scrollableChild.getScaleX(),
+            scaleFactor);
+        animateProperty(
+            scrollableChild,
+            "scaleY",
+            scrollableChild.getScaleY(),
+            scaleFactor);
       } else {
         scrollableChild.setScaleX(scaleFactor);
         scrollableChild.setScaleY(scaleFactor);
@@ -292,7 +306,11 @@ public class DirectedScrollView extends ReactViewGroup {
     for (DirectedScrollViewChild scrollableChild : scrollableChildren) {
       if (scrollableChild.getShouldScrollHorizontally()) {
         if (animated) {
-          animateProperty(scrollableChild, "translationX", scrollableChild.getTranslationX(), scrollX);
+          animateProperty(
+              scrollableChild,
+              "translationX",
+              scrollableChild.getTranslationX(),
+              scrollX);
         } else {
           scrollableChild.setTranslationX(scrollX);
         }
@@ -300,7 +318,11 @@ public class DirectedScrollView extends ReactViewGroup {
 
       if (scrollableChild.getShouldScrollVertically()) {
         if (animated) {
-          animateProperty(scrollableChild, "translationY", scrollableChild.getTranslationY(), scrollY);
+          animateProperty(
+              scrollableChild,
+              "translationY",
+              scrollableChild.getTranslationY(),
+              scrollY);
         } else {
           scrollableChild.setTranslationY(scrollY);
         }
@@ -349,8 +371,11 @@ public class DirectedScrollView extends ReactViewGroup {
     return transformedPoints;
   }
 
-  private void animateProperty(Object target, String property, float start, float end) {
-    if (start == end) return;
+  private void
+  animateProperty(Object target, String property, float start, float end) {
+    if (start == end) {
+      return;
+    }
 
     ObjectAnimator anim = ObjectAnimator.ofFloat(target, property, start, end);
     anim.setDuration(SNAP_BACK_ANIMATION_DURATION);
@@ -385,7 +410,7 @@ public class DirectedScrollView extends ReactViewGroup {
       View childView = getChildAt(i);
 
       if (childView instanceof DirectedScrollViewChild) {
-        scrollableChildren.add((DirectedScrollViewChild) childView);
+        scrollableChildren.add((DirectedScrollViewChild)childView);
       }
     }
 
@@ -393,21 +418,22 @@ public class DirectedScrollView extends ReactViewGroup {
   }
 
   private void emitScrollEvent(
-    ScrollEventType scrollEventType,
-    float xVelocity,
-    float yVelocity) {
-    reactContext.getNativeModule(UIManagerModule.class).getEventDispatcher().dispatchEvent(
-      ScrollEvent.obtain(
-        getId(),
-        scrollEventType,
-        Math.round(scrollX * -1),
-        Math.round(scrollY * -1),
-        xVelocity,
-        yVelocity,
-        Math.round(getContentContainerWidth()),
-        Math.round(getContentContainerHeight()),
-        getWidth(),
-        getHeight()));
+      ScrollEventType scrollEventType,
+      float xVelocity,
+      float yVelocity) {
+    reactContext.getNativeModule(UIManagerModule.class)
+        .getEventDispatcher()
+        .dispatchEvent(ScrollEvent.obtain(
+            getId(),
+            scrollEventType,
+            Math.round(scrollX * -1),
+            Math.round(scrollY * -1),
+            xVelocity,
+            yVelocity,
+            Math.round(getContentContainerWidth()),
+            Math.round(getContentContainerHeight()),
+            getWidth(),
+            getHeight()));
   }
 
   public void setMaximumZoomScale(final float maximumZoomScale) {

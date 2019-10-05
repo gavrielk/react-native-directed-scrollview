@@ -11,14 +11,15 @@ import com.facebook.react.uimanager.ViewManager;
 import com.facebook.react.bridge.JavaScriptModule;
 
 public class DirectedScrollViewPackage implements ReactPackage {
-
   @Override
-  public List<NativeModule> createNativeModules(ReactApplicationContext reactApplicationContext) {
+  public List<NativeModule> createNativeModules(
+      ReactApplicationContext reactApplicationContext) {
     return Collections.emptyList();
   }
 
   @Override
-  public List<ViewManager> createViewManagers(ReactApplicationContext reactApplicationContext) {
+  public List<ViewManager> createViewManagers(
+      ReactApplicationContext reactApplicationContext) {
     ArrayList<ViewManager> viewManagers = new ArrayList<ViewManager>();
     viewManagers.add(new DirectedScrollViewManager());
     viewManagers.add(new DirectedScrollViewChildManager());
