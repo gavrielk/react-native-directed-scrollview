@@ -4,6 +4,8 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Matrix;
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator;
+
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -18,7 +20,6 @@ import com.facebook.react.uimanager.UIManagerModule;
 import com.facebook.react.views.scroll.ReactScrollViewHelper;
 import com.facebook.react.views.view.ReactViewGroup;
 import com.facebook.react.bridge.ReactContext;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -119,6 +120,8 @@ public class DirectedScrollView extends ReactViewGroup {
 
   @Override
   public boolean onTouchEvent(MotionEvent motionEvent) {
+    Log.w("RNDS", "Parent onTouchEvent." + motionEvent.toString());
+
     switch (motionEvent.getAction()) {
       case MotionEvent.ACTION_DOWN:
         onActionDown(motionEvent);
