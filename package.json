@@ -1,6 +1,6 @@
 {
-  "name": "react-native-directed-scrollview",
-  "version": "2.0.0",
+  "name": "@kevinsperrine/react-native-directed-scrollview",
+  "version": "2.0.1",
   "description": "A natively implemented scrollview component which lets you specify different scroll directions for child content.",
   "scripts": {
     "analyze": "npx tsc --noEmit",
@@ -16,10 +16,17 @@
   "types": "lib/typescript/index.d.ts",
   "main": "lib/commonjs/index.js",
   "module": "lib/module/index.js",
-  "files": ["/android", "!/android/build", "/ios", "src/", "lib/", "/*.podspec"],
+  "files": [
+    "/android",
+    "!/android/build",
+    "/ios",
+    "src/",
+    "lib/",
+    "/*.podspec"
+  ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/kevinsperrine/react-native-directed-scrollview"
+    "url": "git+https://github.com/kevinsperrine/react-native-directed-scrollview.git"
   },
   "keywords": [
     "react-component",
@@ -39,9 +46,9 @@
   "author": "Chris Fisher",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/chrisfisher/react-native-directed-scrollview/issues"
+    "url": "https://github.com/kevinsperrine/react-native-directed-scrollview/issues"
   },
-  "homepage": "https://github.com/chrisfisher/react-native-directed-scrollview#readme",
+  "homepage": "https://github.com/kevinsperrine/react-native-directed-scrollview#readme",
   "devDependencies": {
     "@babel/core": "*",
     "@react-native-community/bob": "^0.7.0",
@@ -69,8 +76,14 @@
       "yarn tslint --project tsconfig.json --config tslint.json --fix",
       "git add"
     ],
-    "android/app/src/**/*.java": ["yarn clang-format -i", "git add"],
-    "ios/RCTDirectedScrollView/**/*.{m,h}": ["yarn clang-format -i", "git add"]
+    "android/app/src/**/*.java": [
+      "yarn clang-format -i",
+      "git add"
+    ],
+    "ios/RCTDirectedScrollView/**/*.{m,h}": [
+      "yarn clang-format -i",
+      "git add"
+    ]
   },
   "eslintConfig": {
     "extends": "@react-native-community"
@@ -78,11 +91,19 @@
   "@react-native-community/bob": {
     "source": "src",
     "output": "lib",
-    "targets": ["commonjs", "module", "typescript"]
+    "targets": [
+      "commonjs",
+      "module",
+      "typescript"
+    ]
   },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
     }
+  },
+  "directories": {
+    "example": "example",
+    "lib": "lib"
   }
 }
