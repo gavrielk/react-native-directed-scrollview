@@ -18,7 +18,6 @@ import com.facebook.react.uimanager.UIManagerModule;
 import com.facebook.react.views.scroll.ReactScrollViewHelper;
 import com.facebook.react.views.view.ReactViewGroup;
 import com.facebook.react.bridge.ReactContext;
-
 import java.util.ArrayList;
 import java.util.List;
 
