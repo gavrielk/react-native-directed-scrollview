@@ -1,7 +1,6 @@
 package com.rnds;
 
 import android.content.Context;
-
 import com.facebook.common.internal.Objects;
 import com.facebook.react.views.view.ReactViewGroup;
 

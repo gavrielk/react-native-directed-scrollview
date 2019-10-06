@@ -3,14 +3,13 @@ package com.rnds;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Matrix;
-import android.support.v4.view.animation.FastOutLinearInInterpolator;
+import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewParent;
 import android.view.ScaleGestureDetector;
 import android.view.animation.Interpolator;
-
 import com.facebook.react.views.scroll.ScrollEventType;
 import com.facebook.react.views.scroll.ScrollEvent;
 import com.facebook.react.uimanager.PixelUtil;
