@@ -3,28 +3,27 @@ package com.rnds;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Matrix;
-import androidx.interpolator.view.animation.FastOutLinearInInterpolator;
+import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewParent;
 import android.view.ScaleGestureDetector;
 import android.view.animation.Interpolator;
-import com.facebook.react.views.scroll.ScrollEventType;
-import com.facebook.react.views.scroll.ScrollEvent;
+import android.widget.OverScroller;
 import com.facebook.react.uimanager.PixelUtil;
 import com.facebook.react.uimanager.events.NativeGestureUtil;
-import com.facebook.react.uimanager.UIManagerModule;
 import com.facebook.react.views.scroll.ReactScrollViewHelper;
+import com.facebook.react.views.scroll.VelocityHelper;
 import com.facebook.react.views.view.ReactViewGroup;
 import com.facebook.react.bridge.ReactContext;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DirectedScrollView extends ReactViewGroup {
-  private static final long SNAP_BACK_ANIMATION_DURATION = 120;
   private static final Interpolator SNAP_BACK_ANIMATION_INTERPOLATOR =
-      new FastOutLinearInInterpolator();
+      new LinearOutSlowInInterpolator();
 
   private float minimumZoomScale = 1.0f;
   private float maximumZoomScale = 1.0f;
@@ -44,11 +43,15 @@ public class DirectedScrollView extends ReactViewGroup {
   private float startTouchX;
   private float startTouchY;
   private float scaleFactor = 1.0f;
+  private float decelerationRate = 0.998f;
   private boolean isScaleInProgress;
   private boolean isScrollInProgress;
   private float touchSlop;
   private float lastPositionX, lastPositionY;
-  private boolean isDragging;
+  private int minFlingVelocity;
+  private int maxFlingVelocity;
+  private VelocityHelper velocityHelper = new VelocityHelper();
+  private long animationDuration = 2000;
 
   private ScaleGestureDetector scaleDetector;
 
@@ -59,7 +62,10 @@ public class DirectedScrollView extends ReactViewGroup {
 
     initPinchGestureListeners(context);
     reactContext = (ReactContext)this.getContext();
-    touchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
+    ViewConfiguration vc = ViewConfiguration.get(context);
+    touchSlop = vc.getScaledTouchSlop();
+    minFlingVelocity = vc.getScaledMinimumFlingVelocity();
+    maxFlingVelocity = vc.getScaledMaximumFlingVelocity();
   }
 
   @Override
@@ -75,16 +81,14 @@ public class DirectedScrollView extends ReactViewGroup {
       return false;
     }
 
-    emitScrollEvent(ScrollEventType.BEGIN_DRAG, 0, 0);
-
     int action = motionEvent.getAction();
-    if (action == MotionEvent.ACTION_UP | action == MotionEvent.ACTION_CANCEL) {
+    if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
       isScrollInProgress = false;
       isScaleInProgress = false;
       return false;
     }
 
-    if (action == MotionEvent.ACTION_MOVE & isDragging) {
+    if (action == MotionEvent.ACTION_MOVE && isScrollInProgress) {
       return true;
     }
 
@@ -105,6 +109,8 @@ public class DirectedScrollView extends ReactViewGroup {
         float diffX = Math.abs(motionEvent.getX() - lastPositionX);
         float diffY = Math.abs(motionEvent.getY() - lastPositionY);
         if (isScaleInProgress || diffX > touchSlop || diffY > touchSlop) {
+          ReactScrollViewHelper.emitScrollBeginDragEvent(this);
+          isScrollInProgress = true;
           lastPositionX = motionEvent.getX();
           lastPositionY = motionEvent.getY();
           disallowInterceptTouchEventsForParent();
@@ -118,6 +124,8 @@ public class DirectedScrollView extends ReactViewGroup {
 
   @Override
   public boolean onTouchEvent(MotionEvent motionEvent) {
+    velocityHelper.calculateVelocity(motionEvent);
+
     switch (motionEvent.getAction()) {
       case MotionEvent.ACTION_DOWN:
         onActionDown(motionEvent);
@@ -220,13 +228,27 @@ public class DirectedScrollView extends ReactViewGroup {
       clampAndTranslateChildren(false);
     }
 
-    this.emitScrollEvent(ScrollEventType.SCROLL, deltaX * -1, deltaY * -1);
+    ReactScrollViewHelper.emitScrollEvent(this, deltaX * -1, deltaY * -1);
   }
 
   private void onActionUp() {
     if (isScrollInProgress) {
-      emitScrollEvent(ScrollEventType.END_DRAG, 0, 0);
+      float scale = getContext().getResources().getDisplayMetrics().density;
+      float rnVelocityX = velocityHelper.getXVelocity();
+      float rnVelocityY = velocityHelper.getYVelocity();
+      float velocityX = rnVelocityX * scale * 100;
+      float velocityY = rnVelocityY * scale * 100;
+
+      ReactScrollViewHelper.emitScrollEndDragEvent(this, rnVelocityX, rnVelocityY);
       isScrollInProgress = false;
+
+      if (Math.abs(velocityX) > minFlingVelocity || Math.abs(velocityY) > minFlingVelocity) {
+        OverScroller scroller = predictFinalScrollPosition((int) velocityX, (int) velocityY);
+
+        scrollX = scroller.getFinalX();
+        scrollY = scroller.getFinalY();
+        animationDuration = 1950;
+      }
     }
 
     if (bounces) {
@@ -238,7 +260,9 @@ public class DirectedScrollView extends ReactViewGroup {
     }
 
     isScaleInProgress = false;
+    animationDuration = 250;
   }
+
   private void clampAndTranslateChildren(boolean animated) {
     this.clampAndTranslateChildren(animated, true, true);
   }
@@ -376,7 +400,7 @@ public class DirectedScrollView extends ReactViewGroup {
     }
 
     ObjectAnimator anim = ObjectAnimator.ofFloat(target, property, start, end);
-    anim.setDuration(SNAP_BACK_ANIMATION_DURATION);
+    anim.setDuration(getAnimationDuration());
     anim.setInterpolator(SNAP_BACK_ANIMATION_INTERPOLATOR);
     anim.start();
   }
@@ -415,25 +439,6 @@ public class DirectedScrollView extends ReactViewGroup {
     return scrollableChildren;
   }
 
-  private void emitScrollEvent(
-      ScrollEventType scrollEventType,
-      float xVelocity,
-      float yVelocity) {
-    reactContext.getNativeModule(UIManagerModule.class)
-        .getEventDispatcher()
-        .dispatchEvent(ScrollEvent.obtain(
-            getId(),
-            scrollEventType,
-            Math.round(scrollX * -1),
-            Math.round(scrollY * -1),
-            xVelocity,
-            yVelocity,
-            Math.round(getContentContainerWidth()),
-            Math.round(getContentContainerHeight()),
-            getWidth(),
-            getHeight()));
-  }
-
   public void setMaximumZoomScale(final float maximumZoomScale) {
     this.maximumZoomScale = maximumZoomScale;
   }
@@ -466,11 +471,46 @@ public class DirectedScrollView extends ReactViewGroup {
   }
 
   public void scrollTo(Double x, Double y, Boolean animated) {
+
     float convertedX = PixelUtil.toPixelFromDIP(x);
     float convertedY = PixelUtil.toPixelFromDIP(y);
     scrollX = -convertedX;
     scrollY = -convertedY;
 
     translateChildren(animated);
+  }
+
+  private OverScroller predictFinalScrollPosition(int velocityX, int velocityY) {
+    // ScrollView can *only* scroll for 250ms when using smoothScrollTo and there's
+    // no way to customize the scroll duration. So, we create a temporary OverScroller
+    // so we can predict where a fling would land and snap to nearby that point.
+    OverScroller scroller = new OverScroller(getContext());
+    scroller.setFriction(1.0f - decelerationRate);
+
+    // predict where a fling would end up so we can scroll to the nearest snap offset
+
+    int height = Math.round(getContentContainerHeight());
+    int width = Math.round(getContentContainerWidth());
+    int maximumXOffset = Math.round(getMaxScrollX());
+    int maximumYOffset = Math.round(getMaxScrollY());
+
+    scroller.fling(
+            (int) startScrollX, // startX
+            (int) startScrollY, // startY
+            velocityX, // velocityX
+            velocityY, // velocityY
+            -maximumXOffset, // minX
+            0, // maxX
+            -maximumYOffset, // minY
+            0, // maxY
+           width / 2, // overX
+           height / 2 // overY
+    );
+
+    return scroller;
+  }
+
+  private long getAnimationDuration() {
+    return animationDuration;
   }
 }

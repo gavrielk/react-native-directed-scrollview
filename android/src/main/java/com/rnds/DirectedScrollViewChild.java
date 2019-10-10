@@ -8,7 +8,6 @@ public class DirectedScrollViewChild extends ReactViewGroup {
   private static final String SCROLL_DIRECTION_BOTH = "both";
   private static final String SCROLL_DIRECTION_HORIZONTAL = "horizontal";
   private static final String SCROLL_DIRECTION_VERTICAL = "vertical";
-
   private String scrollDirection;
 
   public DirectedScrollViewChild(Context context) {

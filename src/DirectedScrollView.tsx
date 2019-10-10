@@ -82,7 +82,7 @@ export class DirectedScrollView extends Component<IDirectedScrollViewProps> {
   public componentDidMount() {
     setTimeout(() => {
       this.zoomToStart({ animated: false });
-    }, 16);
+    }, 0);
   }
 
   public render() {
