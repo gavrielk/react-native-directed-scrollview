@@ -1,6 +1,7 @@
 package com.rnds;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.ViewGroupManager;
 import com.facebook.react.uimanager.annotations.ReactProp;
@@ -13,12 +14,12 @@ class DirectedScrollViewManager extends ViewGroupManager<DirectedScrollView> {
   public static final int COMMAND_SCROLL_TO = 1;
   public static final int COMMAND_ZOOM_TO_START = 2;
 
-  @Override
+  @Override @NonNull
   public String getName() {
     return "DirectedScrollView";
   }
 
-  @Override
+  @Override @NonNull
   public DirectedScrollView createViewInstance(ThemedReactContext context) {
     return new DirectedScrollView(context);
   }
@@ -31,37 +32,36 @@ class DirectedScrollViewManager extends ViewGroupManager<DirectedScrollView> {
 
   @Override
   public void receiveCommand(
-      DirectedScrollView view,
-      int commandType,
-      @Nullable ReadableArray args) {
-    super.receiveCommand(view, commandType, args);
+          @NonNull DirectedScrollView view,
+          String commandId,
+          @Nullable ReadableArray args) {
+    boolean animated = args.isNull(2) && args.getBoolean(2);
 
-    switch (commandType) {
-      case COMMAND_SCROLL_TO:
-        Double translateX = args.isNull(0) ? 0.0 : args.getDouble(0);
-        Double translateY = args.isNull(1) ? 0.0 : args.getDouble(1);
-        Boolean animated = args.isNull(2) ? false : args.getBoolean(2);
+    switch (commandId) {
+
+      case "scrollTo":
+        double translateX = args.isNull(0) ? 0 : args.getDouble(0);
+        double translateY = args.isNull(1) ? 0 : args.getDouble(1);
 
         view.scrollTo(translateX, translateY, animated);
         break;
-      case COMMAND_ZOOM_TO_START:
-        view.scrollTo(0.0, 0.0, args.getBoolean(0));
+      case "zoomToStart":
+        view.scrollTo(0.0, 0.0, animated);
         break;
       default:
         throw new IllegalArgumentException(String.format(
-            "Unsupported command %d received by %s.",
-            commandType,
+            "Unsupported command %d received by %s.", commandId,
             getClass().getSimpleName()));
     }
   }
 
   @Override
-  public @Nullable Map getExportedCustomDirectEventTypeConstants() {
+  public @Nullable Map<String, Object> getExportedCustomDirectEventTypeConstants() {
     return createExportedCustomDirectEventTypeConstants();
   }
 
-  public static Map createExportedCustomDirectEventTypeConstants() {
-    return MapBuilder.builder()
+  public static Map<String, Object> createExportedCustomDirectEventTypeConstants() {
+    return MapBuilder.<String, Object>builder()
         .put(
             ScrollEventType.getJSEventName(ScrollEventType.SCROLL),
             MapBuilder.of("registrationName", "onScroll"))
