@@ -1,7 +1,7 @@
 export const getCellsByRow = (): IRow[] => {
   const cellsByRow: IRow[] = [];
 
-  for (let rowIndex = 1; rowIndex < 11; rowIndex++) {
+  for (let rowIndex = 1; rowIndex < 51; rowIndex++) {
     const row: IRow = {
       cells: [],
       id: `row-${rowIndex}`,
