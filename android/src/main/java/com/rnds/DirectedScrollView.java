@@ -3,28 +3,38 @@ package com.rnds;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Matrix;
-import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
-import android.util.Log;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewParent;
-import android.view.ScaleGestureDetector;
 import android.view.animation.Interpolator;
 import android.widget.OverScroller;
+
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.PixelUtil;
 import com.facebook.react.uimanager.events.NativeGestureUtil;
+import com.facebook.react.uimanager.events.RCTEventEmitter;
 import com.facebook.react.views.scroll.ReactScrollViewHelper;
 import com.facebook.react.views.scroll.VelocityHelper;
 import com.facebook.react.views.view.ReactViewGroup;
-import com.facebook.react.bridge.ReactContext;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Arrays;
+
+import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
 
 public class DirectedScrollView extends ReactViewGroup {
   private static final Interpolator SNAP_BACK_ANIMATION_INTERPOLATOR =
       new LinearOutSlowInInterpolator();
 
+  private int animLength = 50;
+  private int animPointer = 0;
+  private ObjectAnimator[] animList = new ObjectAnimator[animLength];
   private float minimumZoomScale = 1.0f;
   private float maximumZoomScale = 1.0f;
   private boolean bounces = true;
@@ -82,6 +92,18 @@ public class DirectedScrollView extends ReactViewGroup {
     }
 
     int action = motionEvent.getAction();
+
+    if(action == MotionEvent.ACTION_DOWN) {
+      if(animList.length > 0) {
+        for (int i = 0; i < animList.length; i++) {
+          if(!Objects.isNull(animList[i]))
+            animList[i].cancel();
+        }
+      }
+      animPointer = 0;
+      return true;
+    }
+
     if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
       isScrollInProgress = false;
       isScaleInProgress = false;
@@ -240,7 +262,7 @@ public class DirectedScrollView extends ReactViewGroup {
       float velocityY = rnVelocityY * scale * 100;
 
       ReactScrollViewHelper.emitScrollEndDragEvent(this, rnVelocityX, rnVelocityY);
-      isScrollInProgress = false;
+//      isScrollInProgress = false;
 
       if (Math.abs(velocityX) > minFlingVelocity || Math.abs(velocityY) > minFlingVelocity) {
         OverScroller scroller = predictFinalScrollPosition((int) velocityX, (int) velocityY);
@@ -403,6 +425,12 @@ public class DirectedScrollView extends ReactViewGroup {
     anim.setDuration(getAnimationDuration());
     anim.setInterpolator(SNAP_BACK_ANIMATION_INTERPOLATOR);
     anim.start();
+
+    animList[animPointer] = anim;
+    if(animPointer >= animLength)
+      animPointer = 0;
+    else
+      animPointer++;
   }
 
   private float clamp(float value, float min, float max) {
