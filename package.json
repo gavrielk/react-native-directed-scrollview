@@ -42,7 +42,9 @@
     "react-native": "^0.64.1"
   },
   "nativePackage": true,
-  "author": "Chris Fisher",
+  "author": {
+    "name": "Chris Fisher"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/olimpic245/react-native-directed-scrollview/issues"
