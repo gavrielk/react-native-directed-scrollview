@@ -1,6 +1,6 @@
 {
   "name": "@olimpic245/react-native-directed-scrollview",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "A natively implemented scrollview component which lets you specify different scroll directions for child content.",
   "scripts": {
     "analyze": "npx tsc --noEmit",
@@ -25,7 +25,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kevinsperrine/react-native-directed-scrollview.git"
+    "url": "git+https://github.com/olimpic245/react-native-directed-scrollview.git"
   },
   "keywords": [
     "react-component",
@@ -38,16 +38,16 @@
     "direction"
   ],
   "peerDependencies": {
-    "react": "16.9.0",
-    "react-native": "^0.61.2"
+    "react": "^17.0.1",
+    "react-native": "^0.64.1"
   },
   "nativePackage": true,
   "author": "Chris Fisher",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/kevinsperrine/react-native-directed-scrollview/issues"
+    "url": "https://github.com/olimpic245/react-native-directed-scrollview/issues"
   },
-  "homepage": "https://github.com/kevinsperrine/react-native-directed-scrollview#readme",
+  "homepage": "https://github.com/olimpic245/react-native-directed-scrollview#readme",
   "devDependencies": {
     "@babel/core": "*",
     "@react-native-community/bob": "^0.7.0",
@@ -58,10 +58,10 @@
     "clang-format": "^1.2.4",
     "husky": "^3.0.8",
     "lint-staged": "^9.4.1",
-    "np": "^5.1.0",
+    "np": "^7.5.0",
     "prettier": "^1.18.2",
-    "react": "16.9.0",
-    "react-native": "^0.61.2",
+    "react": "17.0.1",
+    "react-native": "^0.64.1",
     "tslib": "^1.9.2",
     "tslint": "^5.20.0",
     "tslint-config-prettier": "^1.18.0",
