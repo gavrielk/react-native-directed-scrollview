@@ -3,7 +3,7 @@ import ReactNative, { requireNativeComponent, ScrollViewProps, UIManager, View }
 
 // @ts-ignore
 // tslint:disable-next-line: no-submodule-imports
-import ScrollResponder from 'react-native/Libraries/Components/ScrollResponder';
+import ScrollResponder from './ScrollResponder';
 
 const NativeScrollView = requireNativeComponent('DirectedScrollView');
 
