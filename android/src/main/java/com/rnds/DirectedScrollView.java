@@ -267,8 +267,8 @@ public class DirectedScrollView extends ReactViewGroup {
       if (Math.abs(velocityX) > minFlingVelocity || Math.abs(velocityY) > minFlingVelocity) {
         OverScroller scroller = predictFinalScrollPosition((int) velocityX, (int) velocityY);
 
-        scrollX = scroller.getFinalX();
-        scrollY = scroller.getFinalY();
+//         scrollX = scroller.getFinalX();
+//         scrollY = scroller.getFinalY();
         animationDuration = 1950;
       }
     }
