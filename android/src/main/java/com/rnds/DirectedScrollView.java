@@ -156,7 +156,13 @@ public class DirectedScrollView extends ReactViewGroup {
         onActionPointerDown();
         break;
       case MotionEvent.ACTION_MOVE:
-        onActionMove(motionEvent);
+        float deltaX = motionEvent.getX() - startTouchX;
+        float deltaY = motionEvent.getY() - startTouchY;
+        if (Float.compare(deltaX, 0.0F) == 0 && Float.compare(deltaY, 0.0F) == 0) {
+          return false;
+        } else {
+          onActionMove(motionEvent);
+        }
         break;
       case MotionEvent.ACTION_UP:
         onActionUp();
