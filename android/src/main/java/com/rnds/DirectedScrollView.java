@@ -96,8 +96,16 @@ public class DirectedScrollView extends ReactViewGroup {
     if(action == MotionEvent.ACTION_DOWN) {
       if(animList.length > 0) {
         for (int i = 0; i < animList.length; i++) {
-          if(!Objects.isNull(animList[i]))
+          if(!Objects.isNull(animList[i])) {
             animList[i].cancel();
+            // when client touches during scroll we should get current scroll position, to use as start of next scroll.
+            if (i == 0) {
+              startScrollX = scrollX = (float) animList[0].getAnimatedValue(animList[0].getPropertyName());
+            } else if (i == 1) {
+              startScrollY = scrollY = (float) animList[1].getAnimatedValue(animList[1].getPropertyName());
+            }
+            animList[i] = null;
+          }
         }
       }
       animPointer = 0;
@@ -268,13 +276,13 @@ public class DirectedScrollView extends ReactViewGroup {
       float velocityY = rnVelocityY * scale * 100;
 
       ReactScrollViewHelper.emitScrollEndDragEvent(this, rnVelocityX, rnVelocityY);
-//      isScrollInProgress = false;
+      isScrollInProgress = false;
 
       if (Math.abs(velocityX) > minFlingVelocity || Math.abs(velocityY) > minFlingVelocity) {
         OverScroller scroller = predictFinalScrollPosition((int) velocityX, (int) velocityY);
 
-//         scrollX = scroller.getFinalX();
-//         scrollY = scroller.getFinalY();
+         scrollX = velocityX + scroller.getFinalX();
+         scrollY = velocityY + scroller.getFinalY();
         animationDuration = 1950;
       }
     }
