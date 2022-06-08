@@ -109,7 +109,9 @@ public class DirectedScrollView extends ReactViewGroup {
         }
       }
       animPointer = 0;
-      return true;
+      if (isScrollInProgress) {
+        return true;
+      }
     }
 
     if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
