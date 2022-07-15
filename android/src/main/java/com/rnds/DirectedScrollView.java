@@ -1,5 +1,7 @@
 package com.rnds;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Matrix;
@@ -97,14 +99,13 @@ public class DirectedScrollView extends ReactViewGroup {
       if(animList.length > 0) {
         for (int i = 0; i < animList.length; i++) {
           if(!Objects.isNull(animList[i])) {
-            animList[i].cancel();
             // when client touches during scroll we should get current scroll position, to use as start of next scroll.
             if (i == 0) {
               startScrollX = scrollX = (float) animList[0].getAnimatedValue(animList[0].getPropertyName());
             } else if (i == 1) {
               startScrollY = scrollY = (float) animList[1].getAnimatedValue(animList[1].getPropertyName());
             }
-            animList[i] = null;
+            animList[i].cancel();
           }
         }
       }
@@ -440,6 +441,14 @@ public class DirectedScrollView extends ReactViewGroup {
     ObjectAnimator anim = ObjectAnimator.ofFloat(target, property, start, end);
     anim.setDuration(getAnimationDuration());
     anim.setInterpolator(SNAP_BACK_ANIMATION_INTERPOLATOR);
+    anim.addListener(new AnimatorListenerAdapter() {
+      private int i_pointer = animPointer;
+
+      @Override
+      public void onAnimationEnd(Animator animation) {
+        animList[i_pointer] = null;
+      }
+    });
     anim.start();
 
     animList[animPointer] = anim;
