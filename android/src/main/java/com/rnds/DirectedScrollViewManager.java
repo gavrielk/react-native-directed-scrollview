@@ -33,20 +33,18 @@ class DirectedScrollViewManager extends ViewGroupManager<DirectedScrollView> {
   @Override
   public void receiveCommand(
           @NonNull DirectedScrollView view,
-          String commandId,
+          int commandId,
           @Nullable ReadableArray args) {
-    boolean animated = args.isNull(2) && args.getBoolean(2);
-
     switch (commandId) {
-
-      case "scrollTo":
+      case COMMAND_SCROLL_TO:
         double translateX = args.isNull(0) ? 0 : args.getDouble(0);
         double translateY = args.isNull(1) ? 0 : args.getDouble(1);
-
-        view.scrollTo(translateX, translateY, animated);
+        boolean animatedScroll = args.isNull(2) || args.getBoolean(2);
+        view.scrollTo(translateX, translateY, animatedScroll);
         break;
-      case "zoomToStart":
-        view.scrollTo(0.0, 0.0, animated);
+      case COMMAND_ZOOM_TO_START:
+        boolean animatedZoom = args.isNull(0) || args.getBoolean(0);
+        view.scrollTo(0.0, 0.0, animatedZoom);
         break;
       default:
         throw new IllegalArgumentException(String.format(

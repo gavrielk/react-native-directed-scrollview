@@ -520,6 +520,14 @@ public class DirectedScrollView extends ReactViewGroup {
 
     float convertedX = PixelUtil.toPixelFromDIP(x);
     float convertedY = PixelUtil.toPixelFromDIP(y);
+
+    if (convertedY > getMaxScrollY()) {
+      convertedY = getMaxScrollY();
+    }
+    if (convertedX > getMaxScrollX()) {
+      convertedX = getMaxScrollX();
+    }
+
     scrollX = -convertedX;
     scrollY = -convertedY;
 
