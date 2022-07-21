@@ -13,7 +13,7 @@ import ScrollResponder from './ScrollResponder';
 
 const NativeScrollView = requireNativeComponent('DirectedScrollView');
 
-export type IDirectedScrollViewProps = ScrollViewProps;
+export type IDirectedScrollViewProps = ScrollViewProps & { onSwipeDown: () => void };
 
 function createScrollResponder(node: DirectedScrollView): ScrollResponder.Mixin {
   const scrollResponder = { ...ScrollResponder.Mixin };
