@@ -1,5 +1,11 @@
 import React, { Component } from 'react';
-import ReactNative, { requireNativeComponent, ScrollViewProps, UIManager, View } from 'react-native';
+import ReactNative, {
+  DeviceEventEmitter,
+  requireNativeComponent,
+  ScrollViewProps,
+  UIManager,
+  View,
+} from 'react-native';
 
 // @ts-ignore
 // tslint:disable-next-line: no-submodule-imports
@@ -83,6 +89,12 @@ export class DirectedScrollView extends Component<IDirectedScrollViewProps> {
     setTimeout(() => {
       this.zoomToStart({ animated: false });
     }, 0);
+
+    DeviceEventEmitter.addListener('onSwipeDown', event => {
+      if (this.props.hasOwnProperty('onSwipeDown') && this.props.onSwipeDown) {
+        this.props.onSwipeDown();
+      }
+    });
   }
 
   public render() {

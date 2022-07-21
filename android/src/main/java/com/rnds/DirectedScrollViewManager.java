@@ -131,4 +131,11 @@ class DirectedScrollViewManager extends ViewGroupManager<DirectedScrollView> {
       @Nullable boolean pinchGestureEnabled) {
     view.setPinchGestureEnabled(pinchGestureEnabled);
   }
+
+  @ReactProp(name = "swipeDownHeight", defaultInt = 400)
+  public void setSwipeDownHeight(
+          DirectedScrollView view,
+          @Nullable int height) {
+    view.setSwipeDownHeight(height);
+  }
 }

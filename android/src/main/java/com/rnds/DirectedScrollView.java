@@ -14,6 +14,7 @@ import android.widget.OverScroller;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.uimanager.PixelUtil;
 import com.facebook.react.uimanager.events.NativeGestureUtil;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
@@ -43,6 +44,7 @@ public class DirectedScrollView extends ReactViewGroup {
   private boolean bouncesZoom = true;
   private boolean scrollEnabled = true;
   private boolean pinchGestureEnabled = true;
+  private int swipeDownHeight = 400;
 
   private float pivotX;
   private float pivotY;
@@ -272,6 +274,7 @@ public class DirectedScrollView extends ReactViewGroup {
   }
 
   private void onActionUp() {
+    float scrollYSwipe = 0;
     if (isScrollInProgress) {
       float scale = getContext().getResources().getDisplayMetrics().density;
       float rnVelocityX = velocityHelper.getXVelocity();
@@ -279,6 +282,7 @@ public class DirectedScrollView extends ReactViewGroup {
       float velocityX = rnVelocityX * scale * 100;
       float velocityY = rnVelocityY * scale * 100;
 
+      scrollYSwipe = scrollY;
       ReactScrollViewHelper.emitScrollEndDragEvent(this, rnVelocityX, rnVelocityY);
       isScrollInProgress = false;
 
@@ -301,6 +305,13 @@ public class DirectedScrollView extends ReactViewGroup {
 
     isScaleInProgress = false;
     animationDuration = 250;
+
+    if (scrollYSwipe !=0 && scrollYSwipe > this.swipeDownHeight) {
+      System.out.println("onActionUp onSwipeDown height="+this.swipeDownHeight);
+      this.reactContext
+        .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+        .emit("onSwipeDown", null);
+    }
   }
 
   private void clampAndTranslateChildren(boolean animated) {
@@ -496,6 +507,11 @@ public class DirectedScrollView extends ReactViewGroup {
   public void setPinchGestureEnabled(final boolean pinchGestureEnabled) {
     this.pinchGestureEnabled = pinchGestureEnabled;
   }
+
+  public void setSwipeDownHeight(final int height) {
+    this.swipeDownHeight = height;
+  }
+
   public void setScrollEnabled(final boolean scrollEnabled) {
     this.scrollEnabled = scrollEnabled;
   }
