@@ -10,6 +10,7 @@
 
 - (void)scrollViewWillBeginDragging;
 - (void)scrollViewDidEndDragging;
+- (void)onSwipeDown;
 
 @end
 

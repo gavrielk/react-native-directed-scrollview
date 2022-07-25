@@ -67,6 +67,13 @@
   [super scrollViewDidEndDragging:scrollView willDecelerate:decelerate];
   if ([self.delegate respondsToSelector:@selector(scrollViewDidEndDragging)]) {
     [self.delegate scrollViewDidEndDragging];
+    if ([self.delegate respondsToSelector:@selector(onSwipeDown)]) {
+      CGFloat scrollTop = scrollView.contentOffset.y + self.contentInset.top;
+      CGFloat yOffset = scrollTop / scrollView.zoomScale;
+      if (yOffset <= -120.00f) {
+        [self.delegate onSwipeDown];
+      }
+    }
   }
 }
 
@@ -95,6 +102,10 @@ RCT_EXPORT_MODULE()
 
 - (void)scrollViewDidEndDragging {
   [self.bridge.eventDispatcher sendDeviceEventWithName:@"scrollViewDidEndDragging" body:nil];
+}
+
+- (void)onSwipeDown {
+  [self.bridge.eventDispatcher sendDeviceEventWithName:@"onSwipeDown" body:nil];
 }
 
 // RCTScrollView properties
